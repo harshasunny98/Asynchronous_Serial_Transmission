@@ -1,14 +1,14 @@
 import java.util.Scanner;
 public class Main {
    public static void main(String[] args) {
-      CubbyHole c = new CubbyHole();
-      Client p1 = new Client(c, 2);
-      Server c1 = new Server(c, 2);
+      Transmitter c = new Transmitter();
+      Client p1 = new Client(c, 1);
+      Server c1 = new Server(c, 1);
       p1.start(); 
       c1.start();
    }
 }
-class CubbyHole {
+class Transmitter {
    private char contents;
    private boolean available = false;
    
@@ -34,44 +34,38 @@ class CubbyHole {
    }
 }
 class Server extends Thread {
-   private CubbyHole cubbyhole;
+   private Transmitter t;
    private int number;
    
-   public Server(CubbyHole c, int number) {
-      cubbyhole = c;
+   public Server(Transmitter c, int number) {
+      t = c;
       this.number = number;
    }
    public void run() {
       char value = 0;
-      for (int i = 0; i < 10; i++) {
-         value = cubbyhole.get();
+      for (int i = 0; i <= 20; i++) {
+         value = t.get();
          System.out.println("Server #" + this.number + " got: " + value);
       }
    }
 }
 class Client extends Thread {
-   private CubbyHole cubbyhole;
+   private Transmitter t;
    Scanner scanner = new Scanner(System.in);
    private int number;
-   public Client(CubbyHole c, int number) {
-      cubbyhole = c;
+   public Client(Transmitter c, int number) {
+      t = c;
       this.number = number;
    } 
    public void run() {
       System.out.println("Enter stream of numbers");
-      String data = scanner.next();
+      String data = scanner.nextLine();
       char[] a = data.toCharArray();
       int i=0;
-      /*while(number!=0)
-      {
-          int r = number%10;
-          a[i++]=r;
-          number=number/10;
-      }*/
-      int l = data.length();
+           int l = data.length();
       for (i = 0; i < l; i++) {
           char temp = a[i];
-         cubbyhole.put(temp);
+         t.put(temp);
          System.out.println("Client #" + this.number + " put: " + temp);
          try {
             sleep((int)(Math.random() * 100));
